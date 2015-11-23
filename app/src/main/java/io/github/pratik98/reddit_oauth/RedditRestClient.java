@@ -2,7 +2,6 @@ package io.github.pratik98.reddit_oauth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -20,28 +19,33 @@ import cz.msebera.android.httpclient.Header;
 public class RedditRestClient {
     SharedPreferences pref;
     String token;
+    Context context;
+    private static String CLIENT_ID = "";
+    private static String CLIENT_SECRET ="";
     private static final String BASE_URL = "https://www.reddit.com/api/v1/";
 
-        private static AsyncHttpClient client = new AsyncHttpClient();
+    RedditRestClient(Context cnt){
+        context = cnt;
+    }
+    private static AsyncHttpClient client = new AsyncHttpClient();
 
-        public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-            client.get(getAbsoluteUrl(url), params, responseHandler);
-        }
+    public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.get(getAbsoluteUrl(url), params, responseHandler);
+    }
 
-        public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 
-            client.post(getAbsoluteUrl(url), params, responseHandler);
-        }
+        client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
 
-        private static String getAbsoluteUrl(String relativeUrl) {
-            return BASE_URL + relativeUrl;
-        }
+    private static String getAbsoluteUrl(String relativeUrl) {
+        return BASE_URL + relativeUrl;
+    }
 
-    public void getToken(String relativeUrl,String grant_type,String device_id,Context context) throws JSONException {
-        client.setBasicAuth("Your Client ID","");
-        pref = PreferenceManager.getDefaultSharedPreferences(context);
+    public void getToken(String relativeUrl,String grant_type,String device_id) throws JSONException {
+        client.setBasicAuth(CLIENT_ID,CLIENT_SECRET);
+        pref = context.getSharedPreferences("AppPref",Context.MODE_PRIVATE);
         String code =pref.getString("Code", "");
-
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("code",code);
@@ -69,12 +73,43 @@ public class RedditRestClient {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 //super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.i("statusCode",""+statusCode);
+                Log.i("statusCode", "" + statusCode);
 
 
             }
-
         });
+
+    }
+
+
+    public void revokeToken()
+    {
+        client.setBasicAuth(CLIENT_ID,CLIENT_SECRET);
+        pref = context.getSharedPreferences("AppPref", Context.MODE_PRIVATE);
+        String access_token = pref.getString("token","");
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("token",access_token);
+        requestParams.put("token_type_hint","access_token");
+
+        post("revoke_token",requestParams,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+                Log.i("response", response.toString());
+                SharedPreferences.Editor edit = pref.edit();
+                edit.remove(token);
+                edit.commit();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                //super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.i("statusCode", "" + statusCode);
+            }
+        });
+
 
 
     }

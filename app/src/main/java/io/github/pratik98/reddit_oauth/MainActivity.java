@@ -27,7 +27,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String CLIENT_ID = "YOUR CLIENT ID";
+    private static String CLIENT_ID = "";
     private static String CLIENT_SECRET ="";
     private static String REDIRECT_URI="http://localhost";
     private static String GRANT_TYPE="https://oauth.reddit.com/grants/installed_client";
@@ -99,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Authorization Code is: " + pref.getString("Code", ""), Toast.LENGTH_SHORT).show();
 
                             try {
-                                 new RedditRestClient().getToken(TOKEN_URL, GRANT_TYPE, DEVICE_ID, getApplicationContext());
+                                new RedditRestClient(getApplicationContext()).getToken(TOKEN_URL, GRANT_TYPE, DEVICE_ID);
+                                Toast.makeText(getApplicationContext(), "Auccess Token: " + pref.getString("token", ""), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -122,38 +123,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-               FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-               fab.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View view) {
-                       Snackbar.make(view, "Replace with your own action"+pref.getString("token",""), Snackbar.LENGTH_LONG)
-                               .setAction("Action", null).show();
-                       Toast.makeText(getApplicationContext(), "Access_Token is: " + pref.getString("token", ""), Toast.LENGTH_SHORT).show();
-                   }
-               });
-           }
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
 
-           @Override
-           public boolean onCreateOptionsMenu(Menu menu) {
-               // Inflate the menu; this adds items to the action bar if it is present.
-               getMenuInflater().inflate(R.menu.menu_main, menu);
-               return true;
-           }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-           @Override
-           public boolean onOptionsItemSelected(MenuItem item) {
-               // Handle action bar item clicks here. The action bar will
-               // automatically handle clicks on the Home/Up button, so long
-               // as you specify a parent activity in AndroidManifest.xml.
-               int id = item.getItemId();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-               //noinspection SimplifiableIfStatement
-               if (id == R.id.action_settings) {
-                   return true;
-               }
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
-               return super.onOptionsItemSelected(item);
-           }
-       }
+        return super.onOptionsItemSelected(item);
+    }
+}
 
 
