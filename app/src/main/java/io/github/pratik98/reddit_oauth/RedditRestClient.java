@@ -109,9 +109,39 @@ public class RedditRestClient {
                 Log.i("statusCode", "" + statusCode);
             }
         });
+    }
+	
+	public void getUsername() {
+        Log.i("token", pref.getString("token", ""));
+        //  client.addHeader("Authorization", "bearer " + pref.getString("token", ""));
+        // client.addHeader("User-Agent", "Redditsavedoffline/0.1 by pratik");
 
+        Header[] headers = new Header[2];
+        headers[0] = new BasicHeader("User-Agent", "myRedditapp/0.1 by redditusername");
+        headers[1] = new BasicHeader("Authorization", "bearer " + pref.getString("token", ""));
 
+        client.get(context, "https://oauth.reddit.com/api/v1/me", headers, null, new JsonHttpResponseHandler() {
+            
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                  Log.i("response", response.toString());
+                try {
+                    String username = response.getString("name").toString();
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString("username", username);
+                    edit.commit();
+                } catch (JSONException j) {
+                    j.printStackTrace();
+                }
 
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.i("response", errorResponse.toString());
+                Log.i("statusCode", "" + statusCode);
+            }
+        });
     }
 
 }
