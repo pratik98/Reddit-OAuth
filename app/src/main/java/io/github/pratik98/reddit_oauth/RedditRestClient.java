@@ -20,10 +20,10 @@ public class RedditRestClient {
     SharedPreferences pref;
     String token;
     Context context;
-    private static String CLIENT_ID = "";
+    private static String CLIENT_ID = "YOUR CLIENT_ID";
     private static String CLIENT_SECRET ="";
     private static final String BASE_URL = "https://www.reddit.com/api/v1/";
-
+	private static String REDIRECT_URI="YOUR reddit_uri(as per your reddit app preferences)";
     RedditRestClient(Context cnt){
         context = cnt;
     }
@@ -50,7 +50,7 @@ public class RedditRestClient {
         RequestParams requestParams = new RequestParams();
         requestParams.put("code",code);
         requestParams.put("grant_type",grant_type);
-        requestParams.put("device_id", device_id);
+        requestParams.put("redirect_uri", REDIRECT_URI);
 
         post(relativeUrl, requestParams, new JsonHttpResponseHandler() {
             @Override

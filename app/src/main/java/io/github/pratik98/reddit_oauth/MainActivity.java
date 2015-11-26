@@ -27,10 +27,11 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String CLIENT_ID = "";
+    private static String CLIENT_ID = "YOUR CLIENT_ID";
     private static String CLIENT_SECRET ="";
     private static String REDIRECT_URI="http://localhost";
     private static String GRANT_TYPE="https://oauth.reddit.com/grants/installed_client";
+	private static String GRANT_TYPE2="authorization_code";
     private static String TOKEN_URL ="access_token";
     private static String OAUTH_URL ="https://www.reddit.com/api/v1/authorize";
     private static String OAUTH_SCOPE="read";
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Authorization Code is: " + pref.getString("Code", ""), Toast.LENGTH_SHORT).show();
 
                             try {
-                                new RedditRestClient(getApplicationContext()).getToken(TOKEN_URL, GRANT_TYPE, DEVICE_ID);
+                                new RedditRestClient(getApplicationContext()).getToken(TOKEN_URL, GRANT_TYPE2, DEVICE_ID);
                                 Toast.makeText(getApplicationContext(), "Auccess Token: " + pref.getString("token", ""), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
