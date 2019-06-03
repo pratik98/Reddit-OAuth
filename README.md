@@ -8,6 +8,7 @@ This is a simple implementation of steps mentioned in reddit OAuth guide [here](
 
 
 #ScreenShots
+
 ![Sign in](/Screenshots/sign_in.png)
 
 
